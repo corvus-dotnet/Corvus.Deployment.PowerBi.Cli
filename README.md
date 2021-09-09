@@ -1,5 +1,7 @@
 # Power BI CLI
 
+This tool was inspired by the excellent [TabularEditor](https://github.com/TabularEditor/TabularEditor) and uses some derived code to bring a subset of its devops features to a lightweight, cross-platform CLI tool - packaged as a .NET Global Tool.
+
 Usage
 
 ```

@@ -1,4 +1,4 @@
-﻿// Contents originally from https://github.com/TabularEditor/TabularEditor/blob/master/TOMWrapper/TOMWrapper/Serialization/SplitModelSerializer.cs
+﻿// Contents derived from https://github.com/TabularEditor/TabularEditor/blob/master/TOMWrapper/TOMWrapper/Serialization/SplitModelSerializer.cs
 
 namespace PowerBI.Cli.Commands.Models
 {

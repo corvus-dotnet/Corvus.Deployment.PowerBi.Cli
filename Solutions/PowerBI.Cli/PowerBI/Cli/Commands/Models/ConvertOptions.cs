@@ -1,4 +1,4 @@
-﻿// <copyright file="ListOptions.cs" company="Endjin Limited">
+﻿// <copyright file="ConvertOptions.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 

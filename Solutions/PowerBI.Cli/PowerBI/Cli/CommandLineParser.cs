@@ -29,12 +29,15 @@ namespace PowerBI.Cli
         }
 
         public delegate Task ModelConvert(IServiceCollection services, ConvertOptions options, ICompositeConsole console, InvocationContext invocationContext = null);
+        public delegate Task ModelDeploy(IServiceCollection services, DeployOptions options, ICompositeConsole console, InvocationContext invocationContext = null);
 
         public Parser Create(
-            ModelConvert modelConvert = null)
+            ModelConvert modelConvert = null,
+            ModelDeploy modelDeploy = null)
         {
             // if environmentInit hasn't been provided (for testing) then assign the Command Handler
             modelConvert ??= ModelConvertHandler.ExecuteAsync;
+            modelDeploy ??= ModelDeployHandler.ExecuteAsync;
 
             // Set up intrinsic commands that will always be available.
             RootCommand rootCommand = Root();
@@ -55,9 +58,10 @@ namespace PowerBI.Cli
 
             Command Model()
             {
+                #region Convert command
                 var command = new Command(
                     "model",
-                    "Convert models.");
+                    "Convert and deploy models.");
 
                 var convertCommand = new Command("convert", "Converts model to BIM format.")
                 {
@@ -82,6 +86,36 @@ namespace PowerBI.Cli
                 });
 
                 command.AddCommand(convertCommand);
+                #endregion
+
+                #region Deploy command
+                var deployCommand = new Command("deploy", "Deploys a BIM formatted model to Power BI.")
+                {
+                    Handler = CommandHandler.Create<DeployOptions, InvocationContext>(async (options, context) =>
+                    {
+                        await modelDeploy(this.services, options, this.console, context).ConfigureAwait(false);
+                    }),
+                };
+                deployCommand.AddArgument(new Argument<FileInfo>
+                {
+                    Name = "bim-file-path",
+                    Description = "Path to the BIM file.",
+                    Arity = ArgumentArity.ExactlyOne,
+                }.ExistingOnly());
+                deployCommand.AddArgument(new Argument<string>
+                {
+                    Name = "connection-string",
+                    Description = "PowerBI connection string.",
+                    Arity = ArgumentArity.ExactlyOne,
+                });
+                deployCommand.AddArgument(new Argument<string>
+                {
+                    Name = "database-name",
+                    Description = "PowerBI dataset name.",
+                    Arity = ArgumentArity.ExactlyOne,
+                });
+                command.AddCommand(deployCommand);
+                #endregion
 
                 return command;
             }

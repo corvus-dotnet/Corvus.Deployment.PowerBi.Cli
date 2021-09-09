@@ -7,3 +7,7 @@ Usage
 ```
 model convert C:\temp\model\database.json C:\temp\.output\model.bim
 ```
+
+```
+model deploy C:\temp\.output\model.bim <powerbi-connection-string> <powerbi-dataset-name>
+```

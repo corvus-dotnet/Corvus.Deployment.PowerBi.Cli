@@ -7,6 +7,22 @@
     <RootNamespace />
   </PropertyGroup>
 
+  <PropertyGroup>
+	<PackAsTool>true</PackAsTool>
+	<ToolCommandName>pbi</ToolCommandName>
+  </PropertyGroup>
+
+  <PropertyGroup>
+	<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+	<PackageDescription>powerbi-cli is a cross-platform devops tools for working with Power BI</PackageDescription>
+	<PackageTags>powerbi devops tabulareditor endjin</PackageTags>
+	<PackageReleaseNotes></PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="PowerBI\Cli\Commands\Models\Serializer.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AnalysisServices.NetCore.retail.amd64" Version="19.24.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />

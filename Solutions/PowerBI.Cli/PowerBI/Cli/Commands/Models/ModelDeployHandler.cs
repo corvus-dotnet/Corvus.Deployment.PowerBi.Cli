@@ -27,7 +27,7 @@ namespace PowerBI.Cli.Commands.Models
             JObject bimJson;
             try
             {
-                bimJson = JObject.Parse(File.ReadAllText(deployOptions.BimFilePath.ToString()));
+                bimJson = JObject.Parse(File.ReadAllText(deployOptions.BimFilePath));
             }
             catch (Exception ex)
             {

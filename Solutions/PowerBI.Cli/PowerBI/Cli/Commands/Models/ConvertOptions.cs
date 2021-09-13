@@ -5,18 +5,17 @@
 namespace PowerBI.Cli.Commands.Models
 {
     using System.IO;
-    using NDepend.Path;
-    
+
     public class ConvertOptions
     {
         public ConvertOptions(FileInfo modelFilePath, FileInfo bimOutputFilePath)
         {
-            this.ModelFilePath = modelFilePath.FullName.ToAbsoluteFilePath();
-            this.BimOutputFilePath = bimOutputFilePath.FullName.ToAbsoluteFilePath();
+            this.ModelFilePath = Path.GetFullPath(modelFilePath.FullName);
+            this.BimOutputFilePath = Path.GetFullPath(bimOutputFilePath.FullName);
         }
 
-        public IAbsoluteFilePath ModelFilePath { get; }
+        public string ModelFilePath { get; }
 
-        public IAbsoluteFilePath BimOutputFilePath { get; }
+        public string BimOutputFilePath { get; }
     }
-} 
+}

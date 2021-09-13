@@ -9,7 +9,6 @@ namespace PowerBI.Cli.Commands.Models
     using System.Linq;
     using TOM = Microsoft.AnalysisServices.Tabular;
     using System.Threading;
-    //using TabularEditor.TOMWrapper;
 
     public class TabularDeployer
     {

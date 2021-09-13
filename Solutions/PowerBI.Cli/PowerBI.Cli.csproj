@@ -17,6 +17,7 @@
 	<PackageDescription>powerbi-cli is a cross-platform devops tools for working with Power BI</PackageDescription>
 	<PackageTags>powerbi devops tabulareditor endjin</PackageTags>
 	<PackageReleaseNotes></PackageReleaseNotes>
+	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,7 +27,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AnalysisServices.NetCore.retail.amd64" Version="19.24.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
-    <PackageReference Include="NDepend.Path" Version="2.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Spectre.Console" Version="0.41.0" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.21308.1" />

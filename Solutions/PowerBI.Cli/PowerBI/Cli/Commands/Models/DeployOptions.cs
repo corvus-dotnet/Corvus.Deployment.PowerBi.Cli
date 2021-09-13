@@ -5,18 +5,17 @@
 namespace PowerBI.Cli.Commands.Models
 {
     using System.IO;
-    using NDepend.Path;
 
     public class DeployOptions
     {
         public DeployOptions(FileInfo bimFilePath, string connectionString, string databaseName)
         {
-            this.BimFilePath = bimFilePath.FullName.ToAbsoluteFilePath();
+            this.BimFilePath = Path.GetFullPath(bimFilePath.FullName);
             this.ConnectionString = connectionString;
             this.DatabaseName = databaseName;
         }
 
-        public IAbsoluteFilePath BimFilePath { get; }
+        public string BimFilePath { get; }
 
         public string ConnectionString { get; }
 

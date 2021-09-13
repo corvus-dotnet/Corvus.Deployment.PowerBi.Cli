@@ -75,14 +75,14 @@ namespace PowerBI.Cli
                 {
                     Name = "model-file-path",
                     Description = "Path to the model file.",
-                    Arity = ArgumentArity.ZeroOrOne,
+                    Arity = ArgumentArity.ExactlyOne,
                 }.ExistingOnly());
 
                 convertCommand.AddArgument(new Argument<FileInfo>
                 {
                     Name = "bim-output-file-path",
                     Description = "Path to the bim output file.",
-                    Arity = ArgumentArity.ZeroOrOne,
+                    Arity = ArgumentArity.ExactlyOne,
                 });
 
                 command.AddCommand(convertCommand);

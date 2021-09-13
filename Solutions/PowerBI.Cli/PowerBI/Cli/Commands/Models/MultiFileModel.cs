@@ -28,7 +28,7 @@ namespace PowerBI.Cli.Commands.Models
             var containingDir = Path.GetDirectoryName(path);
             InArray(containingDir, "dataSources", model);
 
-            var tablesDir = Path.Combine(containingDir, $"{Path.DirectorySeparatorChar}", "tables");
+            var tablesDir = Path.Combine(containingDir, "tables");
             if (Directory.Exists(tablesDir))
             {
                 var tables = new JArray();
@@ -496,7 +496,7 @@ namespace PowerBI.Cli.Commands.Models
             var arrayName = objPath.Last();
 
             var array = new JArray();
-            var arrayDirectoryPath = Path.Combine(path, $"{Path.DirectorySeparatorChar}", arrayName);
+            var arrayDirectoryPath = Path.Combine(path, arrayName);
             if (Directory.Exists(arrayDirectoryPath))
             {
                 foreach (var file in Directory.GetFiles(arrayDirectoryPath, "*.json").OrderBy(n => n))

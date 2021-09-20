@@ -2,7 +2,7 @@
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
-namespace PowerBI.Cli.Abstractions
+namespace Corvus.Deployment.PowerBi.Cli.Abstractions
 {
     public class ReturnCodes
     {

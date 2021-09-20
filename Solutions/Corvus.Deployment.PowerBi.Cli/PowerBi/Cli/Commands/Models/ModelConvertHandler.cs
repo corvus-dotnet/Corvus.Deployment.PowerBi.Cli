@@ -2,13 +2,13 @@
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
-namespace PowerBI.Cli.Commands.Models
+namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
 {
     using System.CommandLine.Invocation;
     using System.IO;
     using System.Threading.Tasks;
     using Microsoft.Extensions.DependencyInjection;
-    using PowerBI.Cli.Abstractions;
+    using Corvus.Deployment.PowerBi.Cli.Abstractions;
     using Microsoft.AnalysisServices.Tabular;
     
     public static class ModelConvertHandler

@@ -9,7 +9,7 @@
 
     using Microsoft.Extensions.DependencyInjection;
 
-    using PowerBI.Cli;
+    using Corvus.Deployment.PowerBi.Cli;
 
     public static class Program
     {

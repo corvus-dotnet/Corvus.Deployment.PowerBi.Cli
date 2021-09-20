@@ -1,4 +1,4 @@
-# Power BI CLI
+# Corvus.Deployment.PowerBi.Cli
 
 Usage
 

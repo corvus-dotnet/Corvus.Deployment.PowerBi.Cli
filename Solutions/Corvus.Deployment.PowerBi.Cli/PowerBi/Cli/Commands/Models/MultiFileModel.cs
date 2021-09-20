@@ -1,6 +1,6 @@
 ﻿// Contents originally from https://github.com/TabularEditor/TabularEditor/blob/master/TOMWrapper/TOMWrapper/Serialization/SplitModelSerializer.cs
 
-namespace PowerBI.Cli.Commands.Models
+namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
 {
     using System;
     using System.Collections.Generic;

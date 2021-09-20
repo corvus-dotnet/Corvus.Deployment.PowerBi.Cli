@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <AssemblyName>powerbi-cli</AssemblyName>
+    <AssemblyName>Corvus.Deployment.PowerBi.Cli</AssemblyName>
     <RootNamespace />
   </PropertyGroup>
 
@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="PowerBI\Cli\Infrastructure\" />
+    <Folder Include="PowerBi\Cli\Infrastructure\" />
   </ItemGroup>
   
 </Project>

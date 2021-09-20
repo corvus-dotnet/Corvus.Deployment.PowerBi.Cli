@@ -2,7 +2,7 @@
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
-namespace PowerBI.Cli.Commands.Models
+namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
 {
     using System.IO;
     using NDepend.Path;

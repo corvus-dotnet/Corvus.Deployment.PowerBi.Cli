@@ -2,7 +2,7 @@
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
-namespace PowerBI.Cli
+namespace Corvus.Deployment.PowerBi.Cli
 {
     using System;
     using System.CommandLine.IO;

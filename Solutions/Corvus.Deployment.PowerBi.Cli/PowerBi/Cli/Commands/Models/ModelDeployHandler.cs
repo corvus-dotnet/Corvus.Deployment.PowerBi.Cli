@@ -2,17 +2,18 @@
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
-namespace PowerBI.Cli.Commands.Models
+namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
 {
     using System;
     using System.CommandLine.Invocation;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.AnalysisServices.Tabular;
     using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json.Linq;
-    using PowerBI.Cli.Abstractions;
-    using Microsoft.AnalysisServices.Tabular;
+
+    using Corvus.Deployment.PowerBi.Cli.Abstractions;
 
     public static class ModelDeployHandler
     {

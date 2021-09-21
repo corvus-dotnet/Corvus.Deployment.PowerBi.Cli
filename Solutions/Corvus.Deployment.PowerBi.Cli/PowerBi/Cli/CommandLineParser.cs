@@ -2,9 +2,9 @@
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
-using PowerBI.Cli.Commands.Models;
+using Corvus.Deployment.PowerBi.Cli.Commands.Models;
 
-namespace PowerBI.Cli
+namespace Corvus.Deployment.PowerBi.Cli
 {
     using System.CommandLine;
     using System.CommandLine.Builder;
@@ -15,7 +15,7 @@ namespace PowerBI.Cli
 
     using Microsoft.Extensions.DependencyInjection;
 
-    using PowerBI.Cli.Commands;
+    using Corvus.Deployment.PowerBi.Cli.Commands;
 
     public class CommandLineParser
     {

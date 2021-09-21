@@ -5,16 +5,16 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["PowerBI.Cli/PowerBI.Cli.csproj", "PowerBI.Cli/"]
-RUN dotnet restore "PowerBI.Cli/PowerBI.Cli.csproj"
+COPY ["Corvus.Deployment.PowerBi.Cli/Corvus.Deployment.PowerBi.Cli.csproj", "Corvus.Deployment.PowerBi.Cli/"]
+RUN dotnet restore "Corvus.Deployment.PowerBi.Cli/Corvus.Deployment.PowerBi.Cli.csproj"
 COPY . .
-WORKDIR "/src/PowerBI.Cli"
-RUN dotnet build "PowerBI.Cli.csproj" -c Release -o /app/build
+WORKDIR "/src/Corvus.Deployment.PowerBi.Cli"
+RUN dotnet build "Corvus.Deployment.PowerBi.Cli.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "PowerBI.Cli.csproj" -c Release -o /app/publish
+RUN dotnet publish "Corvus.Deployment.PowerBi.Cli.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "powerbi-cli.dll"]
+ENTRYPOINT ["dotnet", "Corvus.Deployment.PowerBi.Cli.dll"]

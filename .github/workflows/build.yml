@@ -1,0 +1,33 @@
+name: build
+on:
+- push
+- workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Run Build
+    outputs:
+      semver: ${{ steps.run_build.outputs.SemVer }}
+      major: ${{ steps.run_build.outputs.Major }}
+      majorMinor: ${{ steps.run_build.outputs.Major }}.${{ steps.run_gitversion.outputs.Minor }}
+      preReleaseTag: ${{ steps.run_build.outputs.PreReleaseTag }}
+    steps:
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '5.0.x'
+    - uses: actions/checkout@v2
+      with:
+          fetch-depth: 0
+    - id: run_build
+      run: pwsh -f ./build.ps1
+
+  gitversion_debug:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - run: |
+        echo "SemVer    : ${{ needs.build.outputs.semver }}"
+        echo "Major     : ${{ needs.build.outputs.major }}"
+        echo "MajorMinor: ${{ needs.build.outputs.majorMinor }}"
+        echo "PreReleaseTag: ${{ needs.build.outputs.preReleaseTag }}"

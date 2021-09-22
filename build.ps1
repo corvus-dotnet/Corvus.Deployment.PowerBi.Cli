@@ -25,7 +25,10 @@ param (
     [string] $LogLevel = "minimal",
 
     [Parameter()]
-    [switch] $Clean
+    [switch] $Clean,
+
+    [Parameter()]
+    [string] $RecommendedPracticesModulePath
 )
 
 $ErrorActionPreference = 'Stop'
@@ -53,11 +56,17 @@ if ($MyInvocation.ScriptName -notlike '*Invoke-Build.ps1') {
 #endregion
 
 # Import shared tasks and initialise build framework
-if (!(Get-Module -ListAvailable Endjin.RecommendedPractices.Build)) {
-    Write-Information "Installing 'Endjin.RecommendedPractices.Build' module..."
-    Install-Module Endjin.RecommendedPractices.Build -RequiredVersion 0.1.0-beta0001 -AllowPrerelease -Scope CurrentUser -Force -Repository PSGallery
+if (!($RecommendedPracticesModulePath)) {
+    if (!(Get-Module -ListAvailable Endjin.RecommendedPractices.Build)) {
+        Write-Information "Installing 'Endjin.RecommendedPractices.Build' module..."
+        Install-Module Endjin.RecommendedPractices.Build -RequiredVersion 0.1.0-beta0002 -AllowPrerelease -Scope CurrentUser -Force -Repository PSGallery
+    }
+    $RecommendedPracticesModulePath = "Endjin.RecommendedPractices.Build"
 }
-Import-Module Endjin.RecommendedPractices.Build -Force
+else {
+    Write-Information "RecommendedPracticesModulePath: $RecommendedPracticesModulePath"
+}
+Import-Module $RecommendedPracticesModulePath -Force
 . Endjin.RecommendedPractices.Build.tasks
 
 
@@ -65,6 +74,7 @@ Import-Module Endjin.RecommendedPractices.Build -Force
 $SolutionToBuild = "Solutions/Corvus.Deployment.PowerBi.Cli.sln"
 $SkipTests = $true
 $CleanBuild = $true
+$EnableGitVersionAdoVariableWorkaround = $true
 
 # Synopsis: Build, Test and Package
 task . FullBuild

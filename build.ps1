@@ -134,8 +134,8 @@ task PrePackage {}
 task PostPackage {}
 
 trap {
-    Get-Location | fl | out-string | Write-Information
-    exec { tree }
+    Get-Location | Format-List | Out-String | Write-Information
+    if (Get-Command "tree" -ea 0) { & tree }
 }
 
 function Set-BuildServerVariable

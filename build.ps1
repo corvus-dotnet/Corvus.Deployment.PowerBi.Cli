@@ -133,16 +133,16 @@ task PostTestReport {}
 task PrePackage {}
 task PostPackage {}
 
-task FixFSCase -After RestorePackages {
-    if ($IsLinux) {
-        $pathToFix = "$($env:HOME)/.nuget/packages/microsoft.analysisservices.netcore.retail.amd64/19.24.4/lib/netcoreapp3.0"
-        ls -la $pathToFix
-        Write-Build Green "Fixing case of 'zh-HANS' & 'zh-HANT' resource folders"
-        mv $pathToFix/zh-HANS $pathToFix/zh-Hans
-        mv $pathToFix/zh-HANT $pathToFix/zh-Hant
-        ls -la $pathToFix
-    }
-}
+# task FixFSCase -After RestorePackages {
+#     if ($IsLinux) {
+#         $pathToFix = "$($env:HOME)/.nuget/packages/microsoft.analysisservices.netcore.retail.amd64/19.24.4/lib/netcoreapp3.0"
+#         ls -la $pathToFix
+#         Write-Build Green "Fixing case of 'zh-HANS' & 'zh-HANT' resource folders"
+#         mv $pathToFix/zh-HANS $pathToFix/zh-Hans
+#         mv $pathToFix/zh-HANT $pathToFix/zh-Hant
+#         ls -la $pathToFix
+#     }
+# }
 
 trap {
     Get-Location | Format-List | Out-String | Write-Information

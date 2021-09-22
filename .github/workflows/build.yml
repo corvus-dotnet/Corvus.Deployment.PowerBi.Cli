@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     name: Run Build
     outputs:
       semver: ${{ steps.run_build.outputs.SemVer }}
@@ -14,10 +14,12 @@ jobs:
       preReleaseTag: ${{ steps.run_build.outputs.PreReleaseTag }}
     steps:
     - uses: actions/setup-dotnet@v1
+      if: ${{ github.actor != 'nektos/act' }}
       name: Install .NET Core SDK 3.1.x
       with:
         dotnet-version: '3.1.x'
     - uses: actions/setup-dotnet@v1
+      if: ${{ github.actor != 'nektos/act' }}
       name: Install .NET Core SDK 5.0.x
       with:
         dotnet-version: '5.0.x'

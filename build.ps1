@@ -141,3 +141,22 @@ task GitVersion -If {!$SkipGitVersion} {
         Set-BuildServerVariable -Name $var -Value $GitVersion[$var]
     }
 }
+
+function Set-BuildServerVariable
+{
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)]
+        [string] $Name,
+
+        [Parameter(Mandatory=$true)]
+        $Value
+    )
+
+    if ($env:TF_BUILD) {
+        Write-Information "##vso[task.setvariable variable=$Name]$Value" -InformationAction Continue
+    }
+    elseif ($env:GITHUB_ACTIONS) {
+        Write-Information "`n::set-output name=$Name::$Value" -InformationAction Continue
+    }
+}

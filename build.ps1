@@ -126,3 +126,18 @@ task PreTestReport {}
 task PostTestReport {}
 task PrePackage {}
 task PostPackage {}
+
+task GitVersion -If {!$SkipGitVersion} {
+    Install-DotNetTool -Name "GitVersion.Tool" -Version $GitVersionToolVersion
+    $gitVersionOutputJson = exec { dotnet-gitversion /output json /nofetch }
+    Write-Build Cyan "GitVersion JSON Output:`n$gitVersionOutputJson"
+    $env:GitVersionOutput = $gitVersionOutputJson
+    $script:GitVersion = $gitVersionOutputJson | ConvertFrom-Json -AsHashtable
+    Write-Build Cyan "GitVersion OBject Output:`n$($GitVersion|fl|out-string)"
+
+    # Set the native GitVersion output as environment variables and build server variables
+    foreach ($var in $script:GitVersion.Keys) {
+        Set-Item -Path "env:GITVERSION_$var" -Value $GitVersion[$var]
+        Set-BuildServerVariable -Name $var -Value $GitVersion[$var]
+    }
+}

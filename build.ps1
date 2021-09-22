@@ -133,9 +133,10 @@ task PostTestReport {}
 task PrePackage {}
 task PostPackage {}
 
-# trap {
-#     Write-BuildServerError $_
-# }
+trap {
+    Get-Location | fl | out-string | Write-Information
+    exec { tree }
+}
 
 function Set-BuildServerVariable
 {

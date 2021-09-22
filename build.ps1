@@ -115,12 +115,13 @@ $CleanBuild = $true
 
 # Advanced build settings
 $EnableGitVersionAdoVariableWorkaround = $false
+$GitVersionToolVersion = "5.7.0"
 
 # Synopsis: Build, Test and Package
 task . FullBuild
 
 # extensibility tasks
-task PreBuild {}
+task PreBuild { tree }
 task PostBuild {}
 task PreTest {}
 task PostTest {}
@@ -132,3 +133,23 @@ task PostPackage {}
 # trap {
 #     Write-BuildServerError $_
 # }
+
+function Set-BuildServerVariable
+{
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)]
+        [string] $Name,
+
+        [Parameter(Mandatory=$true)]
+        [AllowNull()]
+        $Value
+    )
+
+    if ($env:TF_BUILD) {
+        Write-Information "##vso[task.setvariable variable=$Name]$Value" -InformationAction Continue
+    }
+    elseif ($env:GITHUB_ACTIONS) {
+        Write-Information "`n::set-output name=$Name::$Value" -InformationAction Continue
+    }
+}

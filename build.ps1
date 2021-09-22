@@ -53,23 +53,28 @@ if ($MyInvocation.ScriptName -notlike '*Invoke-Build.ps1') {
 #endregion
 
 # Import shared tasks and initialise build framework
-# TODO: Get shared tasks published to PowerShell Gallery
-Import-Module "C:\_DATA\code\vellum-cli\Endjin.RecommendedPractices.Build\Endjin.RecommendedPractices.Build.psd1"
+if (!(Get-Module -ListAvailable Endjin.RecommendedPractices.Build)) {
+    Write-Information "Installing 'Endjin.RecommendedPractices.Build' module..."
+    Install-Module Endjin.RecommendedPractices.Build -RequiredVersion 0.1.0-beta0001 -AllowPrerelease -Scope CurrentUser -Force -Repository PSGallery
+}
+Import-Module Endjin.RecommendedPractices.Build -Force
 . Endjin.RecommendedPractices.Build.tasks
 
+
 # build variables
-$SolutionToBuild = "Solutions/PowerBI.Cli.sln"
+$SolutionToBuild = "Solutions/Corvus.Deployment.PowerBi.Cli.sln"
 $SkipTests = $true
+$CleanBuild = $true
 
 # Synopsis: Build, Test and Package
 task . FullBuild
 
-# extensibility targets
-task PreBuild -Before Build
-task PostBuild -After Build
-task PreTest -Before Test
-task PostTest -After Test
-task PreTestReport -Before TestReport
-task PostTestReport -After TestReport
-task PrePackage -Before Package
-task PostPackage -After Package
+# extensibility tasks
+task PreBuild {}
+task PostBuild {}
+task PreTest {}
+task PostTest {}
+task PreTestReport {}
+task PostTestReport {}
+task PrePackage {}
+task PostPackage {}

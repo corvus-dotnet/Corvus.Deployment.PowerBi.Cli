@@ -25,7 +25,7 @@ jobs:
       with:
           fetch-depth: 0
     - id: run_build
-      run: pwsh -f ./build.ps1
+      run: pwsh -f ./build.ps1 -LogLevel detailed
 
   gitversion_debug:
     runs-on: ubuntu-latest

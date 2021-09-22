@@ -121,7 +121,7 @@ $GitVersionToolVersion = "5.7.0"
 task . FullBuild
 
 # extensibility tasks
-task PreBuild { pwd; tree }
+task PreBuild { Get-Location; exec {tree} }
 task PostBuild {}
 task PreTest {}
 task PostTest {}

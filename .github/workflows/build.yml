@@ -38,10 +38,11 @@ jobs:
     # Publishing steps
     - name: Publish NuGet Package(s)
       run: |
-        # nuget sources add -name github -source "https://nuget.pkg.github.com/corvus-dotnet/index.json" -username "corvus-dotnet" -password "${{ secrets.GITHUB_TOKEN }}"
-        # nuget push **\*.nupkg -Source github
-        dotnet nuget add source --name github "https://nuget.pkg.github.com/corvus-dotnet/index.json"
-        dotnet nuget push "**/*.nupkg" --source github --api-key ${{ env.GITHUB_API_KEY }} --skip-duplicate
+        tree
+        nuget sources add -name github -source "https://nuget.pkg.github.com/corvus-dotnet/index.json"
+        nuget push **/*.nupkg -Source github -ApiKey "${{ env.GITHUB_API_KEY }}"
+        #dotnet nuget add source --name github "https://nuget.pkg.github.com/corvus-dotnet/index.json"
+        #dotnet nuget push "**/*.nupkg" --source github --api-key "${{ env.GITHUB_API_KEY }}" --skip-duplicate
       env:
         GITHUB_API_KEY: ${{ github.token }}
 

@@ -38,19 +38,19 @@ jobs:
         pwsh -f ./build.ps1
 
     # Publishing steps
-    - name: Publish NuGet Package(s)
+    - name: Publish to GitHub Packages
       run: |
         dotnet tool install -g gpr
         gci _packages/
-        gpr push --repository corvus-dotnet/Corvus.Deployment.PowerBi.Cli --api-key $env:GITHUB_TOKEN _packages/*.nupkg
+        gpr push --repository corvus-dotnet/Corvus.Deployment.PowerBi.Cli --api-key $env:GITHUB_TOKEN "_packages/*.nupkg"
       shell: pwsh
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Publish NuGet Package(s)
+    - name: Publish to NuGet.org
       if: ${{ startsWith(github.event.ref, 'refs/tags/') }}
       run: |
-        nuget push _packages/*.nupkg -Source "https://api.nuget.org/v3/index.json" -ApiKey $env:NUGET_APIKEY
+        nuget push "_packages/**/*.nupkg" -Source "https://api.nuget.org/v3/index.json" -ApiKey $env:NUGET_APIKEY
       shell: pwsh
       env:
         NUGET_APIKEY: ${{ secrets.CORVUS_DOTNET_NUGET_APIKEY }}

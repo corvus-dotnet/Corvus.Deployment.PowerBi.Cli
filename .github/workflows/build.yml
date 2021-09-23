@@ -5,34 +5,53 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     name: Run Build
     outputs:
       semver: ${{ steps.run_build.outputs.SemVer }}
       major: ${{ steps.run_build.outputs.Major }}
-      majorMinor: ${{ steps.run_build.outputs.Major }}.${{ steps.run_gitversion.outputs.Minor }}
+      majorMinor: ${{ steps.run_build.outputs.Major }}.${{ steps.run_build.outputs.Minor }}
       preReleaseTag: ${{ steps.run_build.outputs.PreReleaseTag }}
     steps:
+    # Setup steps
     - uses: actions/setup-dotnet@v1
+      if: ${{ github.actor != 'nektos/act' }}
       name: Install .NET Core SDK 3.1.x
       with:
         dotnet-version: '3.1.x'
     - uses: actions/setup-dotnet@v1
+      if: ${{ github.actor != 'nektos/act' }}
       name: Install .NET Core SDK 5.0.x
       with:
         dotnet-version: '5.0.x'
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
+
+    # Build steps
     - uses: actions/checkout@v2
       with:
           fetch-depth: 0
     - id: run_build
-      run: pwsh -f ./build.ps1
+      run: |
+        pwsh -f ./build.ps1
 
-  gitversion_debug:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-    - run: |
-        echo "SemVer    : ${{ needs.build.outputs.semver }}"
-        echo "Major     : ${{ needs.build.outputs.major }}"
-        echo "MajorMinor: ${{ needs.build.outputs.majorMinor }}"
-        echo "PreReleaseTag: ${{ needs.build.outputs.preReleaseTag }}"
+    # Publishing steps
+    - name: Publish NuGet Package(s)
+      run: |
+        dotnet tool install -g gpr
+        gci _packages/
+        gpr push --repository corvus-dotnet/Corvus.Deployment.PowerBi.Cli --api-key $env:GITHUB_TOKEN _packages/*.nupkg
+      shell: pwsh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish NuGet Package(s)
+      if: ${{ startsWith(github.event.ref, 'refs/tags/') }}
+      run: |
+        nuget push _packages/*.nupkg -Source "https://api.nuget.org/v3/index.json" -ApiKey $env:NUGET_APIKEY
+      shell: pwsh
+      env:
+        NUGET_APIKEY: ${{ secrets.ENDJIN_NUGET_APIKEY }}
+
+
+

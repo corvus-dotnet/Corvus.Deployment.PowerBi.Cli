@@ -97,7 +97,7 @@ if ($MyInvocation.ScriptName -notlike '*Invoke-Build.ps1') {
 if (!($RecommendedPracticesModulePath)) {
     if (!(Get-Module -ListAvailable Endjin.RecommendedPractices.Build)) {
         Write-Information "Installing 'Endjin.RecommendedPractices.Build' module..."
-        Install-Module Endjin.RecommendedPractices.Build -RequiredVersion 0.1.0-beta0002 -AllowPrerelease -Scope CurrentUser -Force -Repository PSGallery
+        Install-Module Endjin.RecommendedPractices.Build -RequiredVersion 0.1.0-beta0003 -AllowPrerelease -Scope CurrentUser -Force -Repository PSGallery
     }
     $RecommendedPracticesModulePath = "Endjin.RecommendedPractices.Build"
 }
@@ -109,10 +109,13 @@ Import-Module $RecommendedPracticesModulePath -Force
 
 
 # build variables
-$SolutionToBuild = "Solutions/Corvus.Deployment.PowerBi.Cli.sln"
+$SolutionToBuild = (Resolve-Path (Join-Path $here "Solutions/Corvus.Deployment.PowerBi.Cli.sln")).Path
 $SkipTests = $true
 $CleanBuild = $true
-$EnableGitVersionAdoVariableWorkaround = $true
+
+# Advanced build settings
+$EnableGitVersionAdoVariableWorkaround = $false
+$GitVersionToolVersion = "5.6.6"
 
 # Synopsis: Build, Test and Package
 task . FullBuild
@@ -126,18 +129,3 @@ task PreTestReport {}
 task PostTestReport {}
 task PrePackage {}
 task PostPackage {}
-
-task GitVersion -If {!$SkipGitVersion} {
-    Install-DotNetTool -Name "GitVersion.Tool" -Version $GitVersionToolVersion
-    $gitVersionOutputJson = exec { dotnet-gitversion /output json /nofetch }
-    Write-Build Cyan "GitVersion JSON Output:`n$gitVersionOutputJson"
-    $env:GitVersionOutput = $gitVersionOutputJson
-    $script:GitVersion = $gitVersionOutputJson | ConvertFrom-Json -AsHashtable
-    Write-Build Cyan "GitVersion OBject Output:`n$($GitVersion|fl|out-string)"
-
-    # Set the native GitVersion output as environment variables and build server variables
-    foreach ($var in $script:GitVersion.Keys) {
-        Set-Item -Path "env:GITVERSION_$var" -Value $GitVersion[$var]
-        Set-BuildServerVariable -Name $var -Value $GitVersion[$var]
-    }
-}

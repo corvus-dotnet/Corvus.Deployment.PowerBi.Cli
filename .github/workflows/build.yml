@@ -38,9 +38,12 @@ jobs:
     # Publishing steps
     - name: Publish NuGet Package(s)
       run: |
-        dir _packages/
+        gci _packages/
         nuget sources Add -Name github -Source "https://nuget.pkg.github.com/corvus-dotnet/index.json"
-        nuget push _packages/*.nupkg -Source github -ApiKey "${{ secrets.GITHUB_TOKEN }}"
+        nuget push _packages/*.nupkg -Source github -ApiKey $env:GITHUB_TOKEN
+      shell: pwsh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Publish NuGet Package(s)
       if: ${{ startsWith(github.event.ref, 'refs/tags/') }}

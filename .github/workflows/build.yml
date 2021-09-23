@@ -5,6 +5,8 @@ on:
 
 jobs:
   build:
+    # We currently have to run a Windows agent due to case-sensitive filesystem issues
+    # with a .NET culture-specific resources folder names
     runs-on: windows-latest
     name: Run Build
     outputs:
@@ -51,7 +53,7 @@ jobs:
         nuget push _packages/*.nupkg -Source "https://api.nuget.org/v3/index.json" -ApiKey $env:NUGET_APIKEY
       shell: pwsh
       env:
-        NUGET_APIKEY: ${{ secrets.ENDJIN_NUGET_APIKEY }}
+        NUGET_APIKEY: ${{ secrets.CORVUS_DOTNET_NUGET_APIKEY }}
 
 
 

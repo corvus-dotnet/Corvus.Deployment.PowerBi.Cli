@@ -38,9 +38,9 @@ jobs:
     # Publishing steps
     - name: Publish NuGet Package(s)
       run: |
+        dotnet tool install -g gpr
         gci _packages/
-        nuget sources Add -Name github -Source "https://nuget.pkg.github.com/corvus-dotnet/index.json"
-        nuget push _packages/*.nupkg -Source github -ApiKey $env:GITHUB_TOKEN
+        gpr push -k $env:GITHUB_TOKEN _packages/*.nupkg
       shell: pwsh
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

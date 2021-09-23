@@ -38,7 +38,7 @@ jobs:
     # Publishing steps
     - name: Publish NuGet Package(s)
       run: |
-        nuget sources add -name github -source "https://nuget.pkg.github.com/endjin/index.json" -username "USERNAME" -password "${{ secrets.GITHUB_TOKEN }}"
+        nuget sources add -name github -source "https://nuget.pkg.github.com/corvus-dotnet/index.json" -username "corvus-dotnet" -password "${{ secrets.GITHUB_TOKEN }}"
         nuget push **\*.nupkg -Source github
 
     - name: Publish NuGet Package(s)

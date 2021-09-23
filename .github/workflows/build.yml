@@ -38,8 +38,10 @@ jobs:
     # Publishing steps
     - name: Publish NuGet Package(s)
       run: |
-        nuget sources add -name github -source "https://nuget.pkg.github.com/corvus-dotnet/index.json" -username "corvus-dotnet" -password "${{ secrets.GITHUB_TOKEN }}"
-        nuget push **\*.nupkg -Source github
+        # nuget sources add -name github -source "https://nuget.pkg.github.com/corvus-dotnet/index.json" -username "corvus-dotnet" -password "${{ secrets.GITHUB_TOKEN }}"
+        # nuget push **\*.nupkg -Source github
+        dotnet nuget add source --username endjinbot --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/corvus-dotnet/index.json"
+        dotnet nuget push "**\*.nupkg" --source "github"
 
     - name: Publish NuGet Package(s)
       if: ${{ startsWith(github.event.ref, 'refs/tags/') }}

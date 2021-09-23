@@ -115,15 +115,15 @@ $CleanBuild = $true
 
 # Advanced build settings
 $EnableGitVersionAdoVariableWorkaround = $false
-$GitVersionToolVersion = "5.7.0"
+$GitVersionToolVersion = "5.6.6"
 
 # Synopsis: Build, Test and Package
 task . FullBuild
 
 # extensibility tasks
 task PreBuild {
-    Get-Location | fl | out-string | Write-Information
-    exec {tree}
+    # Get-Location | fl | out-string | Write-Information
+    # exec {tree}
 }
 task PostBuild {}
 task PreTest {}
@@ -145,8 +145,8 @@ task PostPackage {}
 # }
 
 trap {
-    Get-Location | Format-List | Out-String | Write-Information
-    if (Get-Command "tree" -ea 0) { & tree }
+    # Get-Location | Format-List | Out-String | Write-Information
+    # if (Get-Command "tree" -ea 0) { & tree }
 }
 
 function Set-BuildServerVariable

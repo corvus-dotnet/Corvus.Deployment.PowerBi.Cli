@@ -1,0 +1,59 @@
+name: build
+on:
+- push
+- workflow_dispatch
+
+jobs:
+  build:
+    # We currently have to run a Windows agent due to case-sensitive filesystem issues
+    # with a .NET culture-specific resources folder names
+    runs-on: windows-latest
+    name: Run Build
+    outputs:
+      semver: ${{ steps.run_build.outputs.SemVer }}
+      major: ${{ steps.run_build.outputs.Major }}
+      majorMinor: ${{ steps.run_build.outputs.Major }}.${{ steps.run_build.outputs.Minor }}
+      preReleaseTag: ${{ steps.run_build.outputs.PreReleaseTag }}
+    steps:
+    # Setup steps
+    - uses: actions/setup-dotnet@v1
+      if: ${{ github.actor != 'nektos/act' }}
+      name: Install .NET Core SDK 3.1.x
+      with:
+        dotnet-version: '3.1.x'
+    - uses: actions/setup-dotnet@v1
+      if: ${{ github.actor != 'nektos/act' }}
+      name: Install .NET Core SDK 5.0.x
+      with:
+        dotnet-version: '5.0.x'
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
+
+    # Build steps
+    - uses: actions/checkout@v2
+      with:
+          fetch-depth: 0
+    - id: run_build
+      run: |
+        pwsh -f ./build.ps1
+
+    # Publishing steps
+    - name: Publish to GitHub Packages
+      run: |
+        dotnet tool install -g gpr
+        gci _packages/
+        gpr push --repository corvus-dotnet/Corvus.Deployment.PowerBi.Cli --api-key $env:GITHUB_TOKEN "_packages/*.nupkg"
+      shell: pwsh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish to NuGet.org
+      if: ${{ startsWith(github.event.ref, 'refs/tags/') }}
+      run: |
+        nuget push "_packages/**/*.nupkg" -Source "https://api.nuget.org/v3/index.json" -ApiKey $env:NUGET_APIKEY
+      shell: pwsh
+      env:
+        NUGET_APIKEY: ${{ secrets.CORVUS_DOTNET_NUGET_APIKEY }}
+
+
+

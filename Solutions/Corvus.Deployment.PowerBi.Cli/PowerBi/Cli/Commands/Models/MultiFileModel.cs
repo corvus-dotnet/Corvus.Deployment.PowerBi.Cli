@@ -1,4 +1,4 @@
-﻿// Contents originally from https://github.com/TabularEditor/TabularEditor/blob/master/TOMWrapper/TOMWrapper/Serialization/SplitModelSerializer.cs
+﻿// Contents derived from https://github.com/TabularEditor/TabularEditor/blob/master/TOMWrapper/TOMWrapper/Serialization/SplitModelSerializer.cs
 
 namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
 {
@@ -6,8 +6,6 @@ namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-
-    using NDepend.Path;
 
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
@@ -22,17 +20,19 @@ namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
         private const string AnnDescriptions = "TabularEditor_TranslatedDescriptions";
         private const string AnnDisplayfolders = "TabularEditor_TranslatedDisplayFolders";
 
-        public static string Load(IAbsoluteFilePath path)
+        public static string Load(string path)
         {
             var document = LoadJsonFile(path.ToString());
             var model = document["model"] as JObject;
 
-            InArray(path.ParentDirectoryPath.ToString(), "dataSources", model);
+            var containingDir = Path.GetDirectoryName(path);
+            InArray(containingDir, "dataSources", model);
 
-            if (Directory.Exists(path.ParentDirectoryPath.ToString() + "\\tables"))
+            var tablesDir = Path.Combine(containingDir, "tables");
+            if (Directory.Exists(tablesDir))
             {
                 var tables = new JArray();
-                foreach (var tablePath in Directory.GetDirectories(path.ParentDirectoryPath.ToString() + "\\tables"))
+                foreach (var tablePath in Directory.GetDirectories(tablesDir))
                 {
                     var filesInTableFolder = Directory.GetFiles(tablePath, "*.json");
                     if (filesInTableFolder.Length != 1)
@@ -55,10 +55,10 @@ namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
                 model?.Add("tables", tables);
             }
 
-            InArray(path.ParentDirectoryPath.ToString(), "relationships", model);
-            InArray(path.ParentDirectoryPath.ToString(), "cultures", model);
-            InArray(path.ParentDirectoryPath.ToString(), "perspectives", model);
-            InArray(path.ParentDirectoryPath.ToString(), "roles", model);
+            InArray(containingDir, "relationships", model);
+            InArray(containingDir, "cultures", model);
+            InArray(containingDir, "perspectives", model);
+            InArray(containingDir, "roles", model);
 
             ResolveAnnotations(model);
 
@@ -496,9 +496,10 @@ namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
             var arrayName = objPath.Last();
 
             var array = new JArray();
-            if (Directory.Exists(path + "\\" + arrayName))
+            var arrayDirectoryPath = Path.Combine(path, arrayName);
+            if (Directory.Exists(arrayDirectoryPath))
             {
-                foreach (var file in Directory.GetFiles(path + "\\" + arrayName, "*.json").OrderBy(n => n))
+                foreach (var file in Directory.GetFiles(arrayDirectoryPath, "*.json").OrderBy(n => n))
                 {
                     array.Add(LoadJsonFile(file));
                 }

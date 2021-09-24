@@ -29,12 +29,15 @@ namespace Corvus.Deployment.PowerBi.Cli
         }
 
         public delegate Task ModelConvert(IServiceCollection services, ConvertOptions options, ICompositeConsole console, InvocationContext invocationContext = null);
+        public delegate Task ModelDeploy(IServiceCollection services, DeployOptions options, ICompositeConsole console, InvocationContext invocationContext = null);
 
         public Parser Create(
-            ModelConvert modelConvert = null)
+            ModelConvert modelConvert = null,
+            ModelDeploy modelDeploy = null)
         {
             // if environmentInit hasn't been provided (for testing) then assign the Command Handler
             modelConvert ??= ModelConvertHandler.ExecuteAsync;
+            modelDeploy ??= ModelDeployHandler.ExecuteAsync;
 
             // Set up intrinsic commands that will always be available.
             RootCommand rootCommand = Root();
@@ -55,9 +58,10 @@ namespace Corvus.Deployment.PowerBi.Cli
 
             Command Model()
             {
+                #region Convert command
                 var command = new Command(
                     "model",
-                    "Convert models.");
+                    "Convert and deploy models.");
 
                 var convertCommand = new Command("convert", "Converts model to BIM format.")
                 {
@@ -71,17 +75,51 @@ namespace Corvus.Deployment.PowerBi.Cli
                 {
                     Name = "model-file-path",
                     Description = "Path to the model file.",
-                    Arity = ArgumentArity.ZeroOrOne,
+                    Arity = ArgumentArity.ExactlyOne,
                 }.ExistingOnly());
 
                 convertCommand.AddArgument(new Argument<FileInfo>
                 {
                     Name = "bim-output-file-path",
                     Description = "Path to the bim output file.",
-                    Arity = ArgumentArity.ZeroOrOne,
+                    Arity = ArgumentArity.ExactlyOne,
                 });
 
                 command.AddCommand(convertCommand);
+                #endregion
+
+                #region Deploy command
+                var deployCommand = new Command("deploy", "Deploys a BIM formatted model to Power BI.")
+                {
+                    Handler = CommandHandler.Create<DeployOptions, InvocationContext>(async (options, context) =>
+                    {
+                        await modelDeploy(this.services, options, this.console, context).ConfigureAwait(false);
+                    }),
+                };
+                deployCommand.AddArgument(new Argument<FileInfo>
+                {
+                    Name = "bim-file-path",
+                    Description = "Path to the BIM file.",
+                    Arity = ArgumentArity.ExactlyOne,
+                }.ExistingOnly());
+                deployCommand.AddArgument(new Argument<string>
+                {
+                    Name = "workspace-name",
+                    Description = "PowerBI workspace name.",
+                    Arity = ArgumentArity.ExactlyOne,
+                });
+                deployCommand.AddArgument(new Argument<string>
+                {
+                    Name = "dataset-name",
+                    Description = "PowerBI dataset name.",
+                    Arity = ArgumentArity.ExactlyOne,
+                });
+                deployCommand.AddOption(new Option<string>(
+                        aliases: new string[] { "--tenant-id", "-t" },
+                        description: "PowerBI tenant ID."
+                ));
+                command.AddCommand(deployCommand);
+                #endregion
 
                 return command;
             }

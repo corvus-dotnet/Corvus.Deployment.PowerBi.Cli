@@ -1,4 +1,4 @@
-﻿// Contents orginall from https://github.com/TabularEditor/TabularEditor/blob/885ff9f84f6497b7958a402854d959d747e0e0a2/TOMWrapper/TOMWrapper/Perspective.cs
+﻿// Contents derived from https://github.com/TabularEditor/TabularEditor/blob/885ff9f84f6497b7958a402854d959d747e0e0a2/TOMWrapper/TOMWrapper/Perspective.cs
 
 namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
 {

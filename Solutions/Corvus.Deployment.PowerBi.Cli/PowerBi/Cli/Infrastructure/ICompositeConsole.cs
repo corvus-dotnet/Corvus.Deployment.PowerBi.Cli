@@ -1,4 +1,4 @@
-﻿// <copyright file="IVellumConsole.cs" company="Endjin Limited">
+﻿// <copyright file="ICompositeConsole.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 

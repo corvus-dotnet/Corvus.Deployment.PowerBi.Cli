@@ -4,6 +4,7 @@
 
 namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
 {
+    using System;
     using System.CommandLine.Invocation;
     using System.IO;
     using System.Threading.Tasks;
@@ -23,16 +24,20 @@ namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
         {
             ServiceProvider serviceProvider = services.BuildServiceProvider();
 
+            Console.WriteLine("Loading model...");
             var json = MultiFileModel.Load(convertOptions.ModelFilePath);
             var db = JsonSerializer.DeserializeDatabase(json);
+            Console.WriteLine("Converting model...");
             var bim = JsonSerializer.SerializeDatabase(db, new SerializeOptions
             {
                 SplitMultilineStrings = true,
                 IncludeRestrictedInformation = db.Model.Annotations.Contains(ANN_SAVESENSITIVE) && db.Model.Annotations[ANN_SAVESENSITIVE].Value == "1"
             });
 
+            Console.WriteLine("Saving .BIM artefact...");
             await File.WriteAllTextAsync(convertOptions.BimOutputFilePath.ToString(), bim).ConfigureAwait(false);
 
+            Console.WriteLine("Conversion complete.");
             return ReturnCodes.Ok;
         }
     }

@@ -1,22 +1,21 @@
-﻿// <copyright file="ListOptions.cs" company="Endjin Limited">
+﻿// <copyright file="ConvertOptions.cs" company="Endjin Limited">
 // Copyright (c) Endjin Limited. All rights reserved.
 // </copyright>
 
 namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
 {
     using System.IO;
-    using NDepend.Path;
-    
+
     public class ConvertOptions
     {
         public ConvertOptions(FileInfo modelFilePath, FileInfo bimOutputFilePath)
         {
-            this.ModelFilePath = modelFilePath.FullName.ToAbsoluteFilePath();
-            this.BimOutputFilePath = bimOutputFilePath.FullName.ToAbsoluteFilePath();
+            this.ModelFilePath = Path.GetFullPath(modelFilePath.FullName);
+            this.BimOutputFilePath = Path.GetFullPath(bimOutputFilePath.FullName);
         }
 
-        public IAbsoluteFilePath ModelFilePath { get; }
+        public string ModelFilePath { get; }
 
-        public IAbsoluteFilePath BimOutputFilePath { get; }
+        public string BimOutputFilePath { get; }
     }
-} 
+}

@@ -51,7 +51,7 @@ namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
             if (string.IsNullOrWhiteSpace(targetConnectionString)) throw new ArgumentNullException("targetConnectionString");
             var destinationServer = new TOM.Server();
 
-            Console.WriteLine($"Connecting to server: {targetConnectionString}");
+            Console.WriteLine($"Connecting to XMLA endpoint: {TabularConnection.StripSensitive(TabularConnection.StripApplicationName(targetConnectionString))}");
             destinationServer.Connect(targetConnectionString);
             if (!destinationServer.SupportedCompatibilityLevels.Contains(db.CompatibilityLevel.ToString()))
                 throw new DeploymentException($"The specified server does not support Compatibility Level {db.CompatibilityLevel}");

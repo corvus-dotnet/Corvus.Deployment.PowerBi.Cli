@@ -104,16 +104,20 @@ namespace Corvus.Deployment.PowerBi.Cli
                 }.ExistingOnly());
                 deployCommand.AddArgument(new Argument<string>
                 {
-                    Name = "connection-string",
-                    Description = "PowerBI connection string.",
+                    Name = "workspace-name",
+                    Description = "PowerBI workspace name.",
                     Arity = ArgumentArity.ExactlyOne,
                 });
                 deployCommand.AddArgument(new Argument<string>
                 {
-                    Name = "database-name",
+                    Name = "dataset-name",
                     Description = "PowerBI dataset name.",
                     Arity = ArgumentArity.ExactlyOne,
                 });
+                deployCommand.AddOption(new Option<string>(
+                        aliases: new string[] { "--tenant-id", "-t" },
+                        description: "PowerBI tenant ID."
+                ));
                 command.AddCommand(deployCommand);
                 #endregion
 

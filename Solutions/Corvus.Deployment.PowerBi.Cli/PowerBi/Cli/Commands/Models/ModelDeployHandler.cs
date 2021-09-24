@@ -35,7 +35,7 @@ namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
                 throw new Exception($"Unable to load .bim file from {deployOptions.BimFilePath}.\r\nError:\r\n{ex.GetType()} - {ex.Message}", ex);
             }
             var db = JsonSerializer.DeserializeDatabase(bimJson.ToString());
-            var res = TabularDeployer.Deploy(db, deployOptions.ConnectionString, deployOptions.DatabaseName);
+            var res = TabularDeployer.Deploy(db, deployOptions.ConnectionString, deployOptions.DataSetName);
 
             if (res.Warnings.Count > 0)
             {

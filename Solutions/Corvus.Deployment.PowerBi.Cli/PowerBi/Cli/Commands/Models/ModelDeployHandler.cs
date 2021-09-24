@@ -28,7 +28,8 @@ namespace Corvus.Deployment.PowerBi.Cli.Commands.Models
             JObject bimJson;
             try
             {
-                bimJson = JObject.Parse(File.ReadAllText(deployOptions.BimFilePath));
+                var contents = await File.ReadAllTextAsync(deployOptions.BimFilePath).ConfigureAwait(false);
+                bimJson = JObject.Parse(contents);
             }
             catch (Exception ex)
             {

@@ -51,7 +51,7 @@ namespace Corvus.Deployment.PowerBi.Cli
             {
                 return new RootCommand
                 {
-                    Name = "powerbi-cli",
+                    Name = "pbi",
                     Description = "A CLI Tool for Common Power BI Automation Tasks.",
                 };
             }
@@ -63,7 +63,7 @@ namespace Corvus.Deployment.PowerBi.Cli
                     "model",
                     "Convert and deploy models.");
 
-                var convertCommand = new Command("convert", "Converts model to BIM format.")
+                var convertCommand = new Command("convert", "Converts model to .bim format.")
                 {
                     Handler = CommandHandler.Create<ConvertOptions, InvocationContext>(async (options, context) =>
                     {
@@ -74,14 +74,14 @@ namespace Corvus.Deployment.PowerBi.Cli
                 convertCommand.AddArgument(new Argument<FileInfo>
                 {
                     Name = "model-file-path",
-                    Description = "Path to the model file.",
+                    Description = "Path to the Tabular Editor 'database.json' file.",
                     Arity = ArgumentArity.ExactlyOne,
                 }.ExistingOnly());
 
                 convertCommand.AddArgument(new Argument<FileInfo>
                 {
                     Name = "bim-output-file-path",
-                    Description = "Path to the bim output file.",
+                    Description = "Path to the .bim output file.",
                     Arity = ArgumentArity.ExactlyOne,
                 });
 
@@ -89,7 +89,7 @@ namespace Corvus.Deployment.PowerBi.Cli
                 #endregion
 
                 #region Deploy command
-                var deployCommand = new Command("deploy", "Deploys a BIM formatted model to Power BI.")
+                var deployCommand = new Command("deploy", "Deploys a .bim formatted model to a Power BI Premium workspace.")
                 {
                     Handler = CommandHandler.Create<DeployOptions, InvocationContext>(async (options, context) =>
                     {
@@ -99,24 +99,24 @@ namespace Corvus.Deployment.PowerBi.Cli
                 deployCommand.AddArgument(new Argument<FileInfo>
                 {
                     Name = "bim-file-path",
-                    Description = "Path to the BIM file.",
+                    Description = "Path to the .bim file.",
                     Arity = ArgumentArity.ExactlyOne,
                 }.ExistingOnly());
                 deployCommand.AddArgument(new Argument<string>
                 {
                     Name = "workspace-name",
-                    Description = "PowerBI workspace name.",
+                    Description = "Existing Power BI Premium workspace name.",
                     Arity = ArgumentArity.ExactlyOne,
                 });
                 deployCommand.AddArgument(new Argument<string>
                 {
                     Name = "dataset-name",
-                    Description = "PowerBI dataset name.",
+                    Description = "Power BI dataset name.",
                     Arity = ArgumentArity.ExactlyOne,
                 });
                 deployCommand.AddOption(new Option<string>(
                         aliases: new string[] { "--tenant-id", "-t" },
-                        description: "PowerBI tenant ID."
+                        description: "Power BI tenant ID."
                 ));
                 command.AddCommand(deployCommand);
                 #endregion

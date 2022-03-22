@@ -97,7 +97,7 @@ if ($MyInvocation.ScriptName -notlike '*Invoke-Build.ps1') {
 if (!($RecommendedPracticesModulePath)) {
     if (!(Get-Module -ListAvailable Endjin.RecommendedPractices.Build)) {
         Write-Information "Installing 'Endjin.RecommendedPractices.Build' module..."
-        Install-Module Endjin.RecommendedPractices.Build -RequiredVersion 0.1.0-beta0005 -AllowPrerelease -Scope CurrentUser -Force -Repository PSGallery
+        Install-Module Endjin.RecommendedPractices.Build -RequiredVersion 0.1.4 -Scope CurrentUser -Force -Repository PSGallery
     }
     $RecommendedPracticesModulePath = "Endjin.RecommendedPractices.Build"
 }
@@ -107,18 +107,29 @@ else {
 Import-Module $RecommendedPracticesModulePath -Force
 . Endjin.RecommendedPractices.Build.tasks
 
-
-# build variables
-$SolutionToBuild = (Resolve-Path (Join-Path $here "Solutions/Corvus.Deployment.PowerBi.Cli.sln")).Path
-$SkipTests = $true
-$CleanBuild = $true
+#
+# Build process control options
+#
+$SkipVersion = $false
+$SkipBuild = $false
+$CleanBuild = $Clean.IsPresent ? $Clean : $false
+$SkipTest = $true
+$SkipTestReport = $false
+$SkipPackage = $false
 
 # Advanced build settings
 $EnableGitVersionAdoVariableWorkaround = $false
-$GitVersionToolVersion = "5.6.6"
+$ExcludeFilesFromCodeCoverage = ""
+
+#
+# Build process configuration
+#
+$SolutionToBuild = (Resolve-Path (Join-Path $here "Solutions/Corvus.Deployment.PowerBi.Cli.sln")).Path
+
 
 # Synopsis: Build, Test and Package
 task . FullBuild
+
 
 # extensibility tasks
 task PreBuild {}

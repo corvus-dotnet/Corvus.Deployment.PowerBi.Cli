@@ -3,6 +3,10 @@ on:
 - push
 - workflow_dispatch
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     # We currently have to run a Windows agent due to case-sensitive filesystem issues

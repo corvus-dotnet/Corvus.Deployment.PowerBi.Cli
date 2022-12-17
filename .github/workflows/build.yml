@@ -1,7 +1,16 @@
 name: build
 on:
-- push
-- workflow_dispatch
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build:

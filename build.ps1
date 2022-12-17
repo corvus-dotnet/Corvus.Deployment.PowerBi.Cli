@@ -2,6 +2,7 @@
 # Copyright (c) Endjin Limited. All rights reserved.
 # </copyright>
 
+#Requires -Version 7
 <#
 .SYNOPSIS
     Runs a .NET flavoured build process.
@@ -13,13 +14,13 @@
     Downloads any missing module dependencies (Endjin.RecommendedPractices.Build & InvokeBuild) and executes
     the build process.
 .PARAMETER Tasks
-    Optionally override the default task executed as the entrypoing of the build.
+    Optionally override the default task executed as the entry-point of the build.
 .PARAMETER Configuration
     The build configuration, defaults to 'Release'.
 .PARAMETER BuildRepositoryUri
-    Optional URI that supports pulling MSBuild logic from a web enbdpoint (e.g. a GitHub blob).
+    Optional URI that supports pulling MSBuild logic from a web endpoint (e.g. a GitHub blob).
 .PARAMETER SourcesDir
-    The path where the source code to be built is located.
+    The path where the source code to be built is located, defaults to the current working directory.
 .PARAMETER CoverageDir
     The output path for the test coverage data, if run.
 .PARAMETER TestReportTypes
@@ -29,11 +30,17 @@
 .PARAMETER LogLevel
     The logging verbosity.
 .PARAMETER Clean
-    When true, the .NET solution will be cleaned before compilation.
-.PARAMETER RecommendedPracticesModulePath
+    When true, the .NET solution will be cleaned and all output/intermediate folders deleted.
+.PARAMETER BuildModulePath
     The path to import the Endjin.RecommendedPractices.Build module from. This is useful when
     testing pre-release versions of the Endjin.RecommendedPractices.Build that are not yet
     available in the PowerShell Gallery.
+.PARAMETER BuildModuleVersion
+    The version of the Endjin.RecommendedPractices.Build module to import. This is useful when
+    testing pre-release versions of the Endjin.RecommendedPractices.Build that are not yet
+    available in the PowerShell Gallery.
+.PARAMETER InvokeBuildModuleVersion
+    The version of the InvokeBuild module to be used.
 #>
 [CmdletBinding()]
 param (
@@ -41,7 +48,7 @@ param (
     [string[]] $Tasks = @("."),
 
     [Parameter()]
-    [string] $Configuration = "Release",
+    [string] $Configuration = "Debug",
 
     [Parameter()]
     [string] $BuildRepositoryUri = "",
@@ -66,17 +73,23 @@ param (
     [switch] $Clean,
 
     [Parameter()]
-    [string] $RecommendedPracticesModulePath
+    [string] $BuildModulePath,
+
+    [Parameter()]
+    [version] $BuildModuleVersion = "1.1.1",
+
+    [Parameter()]
+    [version] $InvokeBuildModuleVersion = "5.10.1"
 )
 
 $ErrorActionPreference = 'Stop'
-$InformationPreference = $InformationAction ? $InformationAction : 'Continue'
+$InformationPreference = 'Continue'
 
 $here = Split-Path -Parent $PSCommandPath
 
 #region InvokeBuild setup
 if (!(Get-Module -ListAvailable InvokeBuild)) {
-    Install-Module InvokeBuild -RequiredVersion 5.7.1 -Scope CurrentUser -Force -Repository PSGallery
+    Install-Module InvokeBuild -RequiredVersion $InvokeBuildModuleVersion -Scope CurrentUser -Force -Repository PSGallery
 }
 Import-Module InvokeBuild
 # This handles calling the build engine when this file is run like a normal PowerShell script
@@ -93,50 +106,78 @@ if ($MyInvocation.ScriptName -notlike '*Invoke-Build.ps1') {
 }
 #endregion
 
-# Import shared tasks and initialise build framework
-if (!($RecommendedPracticesModulePath)) {
-    if (!(Get-Module -ListAvailable Endjin.RecommendedPractices.Build)) {
+#region Import shared tasks and initialise build framework
+if (!($BuildModulePath)) {
+    if (!(Get-Module -ListAvailable Endjin.RecommendedPractices.Build | ? { $_.Version -eq $BuildModuleVersion })) {
         Write-Information "Installing 'Endjin.RecommendedPractices.Build' module..."
-        Install-Module Endjin.RecommendedPractices.Build -RequiredVersion 0.1.4 -Scope CurrentUser -Force -Repository PSGallery
+        Install-Module Endjin.RecommendedPractices.Build -RequiredVersion $BuildModuleVersion -Scope CurrentUser -Force -Repository PSGallery
     }
-    $RecommendedPracticesModulePath = "Endjin.RecommendedPractices.Build"
+    $BuildModulePath = "Endjin.RecommendedPractices.Build"
 }
 else {
-    Write-Information "RecommendedPracticesModulePath: $RecommendedPracticesModulePath"
+    Write-Information "BuildModulePath: $BuildModulePath"
 }
-Import-Module $RecommendedPracticesModulePath -Force
+Import-Module $BuildModulePath -RequiredVersion $BuildModuleVersion -Force
+
+# Load the build process & tasks
 . Endjin.RecommendedPractices.Build.tasks
+#endregion
+
 
 #
 # Build process control options
 #
+$SkipInit = $false
 $SkipVersion = $false
 $SkipBuild = $false
-$CleanBuild = $Clean.IsPresent ? $Clean : $false
+$CleanBuild = $Clean
 $SkipTest = $true
 $SkipTestReport = $false
+$SkipAnalysis = $false
 $SkipPackage = $false
+$SkipPublish = $false
 
-# Advanced build settings
-$EnableGitVersionAdoVariableWorkaround = $false
-$ExcludeFilesFromCodeCoverage = ""
 
 #
 # Build process configuration
 #
 $SolutionToBuild = (Resolve-Path (Join-Path $here "Solutions/Corvus.Deployment.PowerBi.Cli.sln")).Path
+$ProjectsToPublish = @(
+    # "Solutions/MySolution/MyWebSite/MyWebSite.csproj"
+)
+$NuSpecFilesToPackage = @(
+    # "Solutions/MySolution/MyProject/MyProject.nuspec"
+)
 
+#
+# Specify files to exclude from code coverage
+# This option is for excluding generated code
+# - Use file path or directory path with globbing (e.g dir1/*.cs)
+# - Use single or multiple paths (separated by comma) (e.g. **/dir1/class1.cs,**/dir2/*.cs,**/dir3/**/*.cs)
+#
+$ExcludeFilesFromCodeCoverage = ""
 
 # Synopsis: Build, Test and Package
 task . FullBuild
 
 
-# extensibility tasks
+# build extensibility tasks
+task RunFirst {}
+task PreInit {}
+task PostInit {}
+task PreVersion {}
+task PostVersion {}
 task PreBuild {}
 task PostBuild {}
 task PreTest {}
 task PostTest {}
 task PreTestReport {}
 task PostTestReport {}
+task PreAnalysis {}
+task PostAnalysis {}
 task PrePackage {}
 task PostPackage {}
+task PrePublish {}
+task PostPublish {}
+task RunLast {}
+
